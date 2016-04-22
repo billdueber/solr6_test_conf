@@ -1,0 +1,33 @@
+<!--
+     - ICUNormalizer2CharFilterFactory does nkfc normalization (ICU Normalizer2)
+     - MappingCharFilterFactory does char-level expansion, (for example, flats and sharps)
+     - ICUTokenizer does a smarter job of finding work boundaries
+     - KeywordRepeatFilterFactory indexes stemmed words twice, once as stemmed and once as given,
+       giving additional relevancy to the latter if it matches
+     - SynonymFilterFactory for synonyms at the token level
+     - CJK* does magical CJK stuff that I don't really understand
+     - The stemmer stems with whatever class is provided (e.g., KStemFilterFactory)
+     - DecimalDigitFilterFactory folds decimals (0..9) into their latin equivalents
+     - RemoveDuplicates does what it says, esp. important because we'll end up wtih two identical
+       tokens for everything that isn't stemmed (due to the )
+
+     - With the ICUFolding, we get:
+       + NFKC normalization (precomosing),
+       + Unicode case folding (i.e., lowercasing)
+       + search term folding (removing accents, etc).
+     - Synonyms can be put in &synonym_file; (see sample synonyms.txt file in solr example)
+     - The CJK stuff produces bigrams for those languages
+     - The KeywordRepeat removes duplicate terms at the same token position
+-->
+
+<charFilter class="solr.ICUNormalizer2CharFilterFactory"/>
+<charFilter class="solr.MappingCharFilterFactory" mapping="&char_expansion_file;"/>
+<tokenizer class="solr.ICUTokenizerFactory"/>
+<filter class="solr.ICUFoldingFilterFactory"/>
+<filter class="solr.CJKWidthFilterFactory"/>
+<filter class="solr.CJKBigramFilterFactory"/>
+<filter class="solr.DecimalDigitFilterFactory"/>
+<filter class="solr.KeywordRepeatFilterFactory"/>
+
+
+

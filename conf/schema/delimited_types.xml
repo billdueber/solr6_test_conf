@@ -1,0 +1,26 @@
+<fieldType name="pipe_delimited" class="solr.TextField">
+    <analyzer type="index">
+        <tokenizer class="solr.PathHierarchyTokenizerFactory" delimiter="|"/>
+    </analyzer>
+    <analyzer type="query">
+        <tokenizer class="solr.KeywordTokenizerFactory"/>
+    </analyzer>
+</fieldType>
+
+<fieldType name="dash_delimited" class="solr.TextField">
+    <analyzer type="index">
+        <tokenizer class="solr.PathHierarchyTokenizerFactory" delimiter="-"/>
+    </analyzer>
+    <analyzer type="query">
+        <tokenizer class="solr.KeywordTokenizerFactory"/>
+    </analyzer>
+</fieldType>
+
+<fieldType name="slash_delimited" class="solr.TextField">
+    <analyzer type="index">
+        <tokenizer class="solr.PathHierarchyTokenizerFactory" delimiter="/"/>
+    </analyzer>
+    <analyzer type="query">
+        <tokenizer class="solr.KeywordTokenizerFactory"/>
+    </analyzer>
+</fieldType>

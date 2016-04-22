@@ -1,0 +1,16 @@
+<fieldType class="solr.BinaryField" name="binary"/>
+
+<fieldType class="solr.BoolField" name="boolean" sortMissingLast="true"/>
+
+<fieldType class="solr.TrieDateField" name="date" precisionStep="0" positionIncrementGap="0"/>
+
+<fieldType class="solr.TrieDoubleField" name="double" precisionStep="0" positionIncrementGap="0"/>
+<fieldType class="solr.TrieFloatField" name="float" precisionStep="0" positionIncrementGap="0"/>
+<fieldType class="solr.TrieIntField" name="int" precisionStep="0" positionIncrementGap="0"   docValues="true"/>
+<fieldType class="solr.TrieLongField" name="long" precisionStep="0" positionIncrementGap="0" docValues="true"/>
+
+
+<fieldType class="solr.StrField" name="string" stored="false" indexed="false" multiValued="false" docValues="true"/>
+<fieldType class="solr.StrField" name="facet"  stored="false" indexed="true" multiValued="true" docValues="true"/>
+
+<fieldType class="solr.StrField" name="ignored" stored="false" indexed="false" multiValued="true"/>
