@@ -4,6 +4,7 @@
     <analyzer>
         <tokenizer class="solr.PatternTokenizerFactory" pattern="[;,]\s*" />
         <filter class="edu.umich.lib.solr_filters.ISBNNormalizerFilterFactory"/>
+        <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
     </analyzer>
 </fieldType>
 
