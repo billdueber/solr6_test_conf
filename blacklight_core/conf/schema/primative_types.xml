@@ -14,3 +14,8 @@
 <fieldType class="solr.StrField" name="facet"  stored="false" indexed="true" multiValued="true" docValues="true"/>
 
 <fieldType class="solr.StrField" name="ignored" stored="false" indexed="false" multiValued="true"/>
+
+<fieldType name="location_rpt" class="solr.SpatialRecursivePrefixTreeFieldType"
+     geo="true" distErrPct="0.025" maxDistErr="0.000009" distanceUnits="degrees" />
+
+<fieldType name="point" class="solr.PointType" dimension="2" subFieldSuffix="_d"/>
