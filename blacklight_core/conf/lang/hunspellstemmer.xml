@@ -1,0 +1,7 @@
+<filter class="solr.HunspellStemFilterFactory"
+    dictionary="lang/en_US.dic"
+    affix="lang/en_US.aff"
+    ignoreCase="false"
+    longestOnly="false" />
+<filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
+    

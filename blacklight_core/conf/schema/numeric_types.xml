@@ -1,0 +1,35 @@
+<!--  ..............................
+      :     Custom numeric types   :
+      ..............................-->
+
+
+
+<!-- numericID
+     Depends on the definitions for min_numid_length, min_numid_length_minus_two, and max_numid_length
+
+        - trim off any whitespace
+        - take the first string of digits/dashes/dots and an optional X or x
+          that is at least min_numid_length characters long (OCLC, ISBN, ISSN, etc.)
+          and throw away everything that's left
+        - lowercase it (i.e., turn any trailing X into an x)
+        - ditch everything that's not a number or an 'x'
+        - Give up if it's not at least min_numid_length characters long or more than max_numid_length characters long
+        - ditch any leading zeros (which others may or may not want)
+ -->
+
+
+
+<fieldtype name="numericID" class="solr.TextField" positionIncrementGap="1000" omitNorms="true">
+  <analyzer>
+      <tokenizer class="solr.KeywordTokenizerFactory"/>
+      <filter class="solr.TrimFilterFactory" />
+      <filter class="solr.PatternReplaceFilterFactory" pattern="^.*?(\p{N}[\p{N}\-\.]{&min_numid_length_minus_two;,}[xX]?).*$" replacement="***$1"/>
+      <filter class="solr.PatternReplaceFilterFactory" pattern="^[^\*].*$" replacement=""/>
+      <filter class="solr.PatternReplaceFilterFactory" pattern="^\*\*\*" replacement=""/>
+      <filter class="solr.LowerCaseFilterFactory"/>
+      <filter class="solr.PatternReplaceFilterFactory" pattern="[^\p{N}x]" replacement="" replace="all"/>
+      <filter class="solr.LengthFilterFactory" min="&min_numid_length;" max="&max_numid_length;"/>
+      <!--<filter class="solr.PatternReplaceFilterFactory" pattern="^0*" replacement=""/>-->
+  </analyzer>
+</fieldtype>
+

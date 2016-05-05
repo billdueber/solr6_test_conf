@@ -1,0 +1,105 @@
+<!--    ............................
+        :     Text types           :
+        ............................
+
+-->
+
+<!-- text
+      A straight-up basic text type, good for all your normal text needs -->
+
+<fieldType name="text" class="solr.TextField" positionIncrementGap="&tpig;">
+  <analyzer type="index">
+      &basic_text_chain_with_synonyms;
+      &stemmer;
+      <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
+  </analyzer>
+  <analyzer type="query">
+    &basic_text_chain;
+    &stemmer;
+    <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
+  </analyzer>
+</fieldType>
+
+<!-- text_nostem
+     Same as text, but without stemming -->
+
+<fieldType name="text_nostem" class="solr.TextField" positionIncrementGap="&tpig;">
+  <analyzer type="index">
+      &basic_text_chain_with_synonyms;
+      <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
+  </analyzer>
+  <analyzer type="query">
+    &basic_text_chain;
+    <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
+  </analyzer>
+</fieldType>
+
+
+<!-- text_l- A left-anchored text type, that only matches if it the query matches
+     the indexed value starting at the left hand side.
+
+     For this one, we have to use the whitespace tokenizer because ICU tokenizer will
+     split on character codepoint changes, and there isn't a character we can use for
+     the prefix (here, 'aaaaa') that wouldn't result in a codepoint change and thus mess
+     up mm settings in (e)dismax request handlers.
+
+     Note that this means that fields of type text_l will potentially have a different
+     number of tokens than those of type text, so you should probably (once again) only
+     use this with phrase searches.
+
+-->
+
+<fieldType name="text_leftjustified" class="solr.TextField" positionIncrementGap="&tpig;">
+  <analyzer>
+    <charFilter class="solr.ICUNormalizer2CharFilterFactory"/>
+    <charFilter class="solr.MappingCharFilterFactory" mapping="&char_expansion_file;"/>
+    <!-- Eliminate leading and trailing punctuation and add on a prefix -->
+    <charFilter class="solr.PatternReplaceCharFilterFactory"
+                pattern="^\p{Punct}*(.*?)\p{Punct}*$" replacement="aaaaa$1" />  
+    <tokenizer class="solr.ICUTokenizerFactory"/>
+    <filter class="solr.ICUFoldingFilterFactory"/>
+    <filter class="solr.CJKWidthFilterFactory"/>
+    <filter class="solr.CJKBigramFilterFactory"/>
+    <filter class="solr.DecimalDigitFilterFactory"/>
+    <filter class="solr.KeywordRepeatFilterFactory"/>
+      &stemmer;
+    <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
+  </analyzer>
+</fieldType>
+
+<!-- exactish - a text type that only matches on the whole string, but with
+     case folding, removal of punctuation, etc.
+
+     This is a more gentle replacement for a String field, which is a bit too
+     extreme in its definition of matching for things like titles
+
+     For general use, this works only if you put in the whole search string
+     as a phrase.
+
+     However, it's probably a pretty good sort key as well
+-->
+
+<fieldType name="exactish" class="solr.TextField" positionIncrementGap="&tpig;">
+  <analyzer>
+    <charFilter class="solr.ICUNormalizer2CharFilterFactory"/>
+    <charFilter class="solr.MappingCharFilterFactory" mapping="&char_expansion_file;"/>
+    <tokenizer class="solr.KeywordTokenizerFactory"/>
+    <filter class="solr.TrimFilterFactory"/>
+    <filter class="solr.ICUFoldingFilterFactory"/>
+    <filter class="solr.CJKWidthFilterFactory"/>
+    <filter class="solr.CJKBigramFilterFactory"/>
+    <filter class="solr.DecimalDigitFilterFactory"/>
+    <filter class="solr.KeywordRepeatFilterFactory"/>
+    <!-- Some punctuation that should be turned into a space (probably just - and :). -->
+    <filter class="solr.PatternReplaceFilterFactory"
+            pattern="([:\-])" replacement=" " replace="all"
+            />
+            
+    <!-- Remove all other punctuation -->
+    <filter class="solr.PatternReplaceFilterFactory"
+            pattern="([\p{Punct}])" replacement="" replace="all"
+            />
+  </analyzer>
+</fieldType>
+
+
