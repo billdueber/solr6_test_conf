@@ -1,2 +1,0 @@
-<filter class="solr.KStemFilterFactory"/>
-<filter class="solr.RemoveDuplicatesTokenFilterFactory"/>

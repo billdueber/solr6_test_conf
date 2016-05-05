@@ -1,2 +1,0 @@
-<filter class="solr.SnowballPorterFilterFactory">
-<filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
