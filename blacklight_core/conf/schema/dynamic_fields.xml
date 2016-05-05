@@ -149,5 +149,73 @@
 <copyField source="*_pp_stored_single" dest="*" />
 <copyField source="*_pp_single" dest="*_pp" />
 
+<dynamicField name="*_tf_single" type="ignored" indexed="false" stored="false" multiValued="false" />
+<copyField source="*_tf" dest="*_t" />
+<copyField source="*_tf_single" dest="*_t" />
+<copyField source="*_tf" dest="*_f" />
+<copyField source="*_tf_single" dest="*_f" />
+<dynamicField name="*_tf_stored_single" type="ignored" indexed="false" stored="false" multiValued="false" />
+<dynamicField name="*_tf_stored" type="ignored" indexed="false" stored="false" multiValued="true" />
+<copyField source="*_tf_stored_single" dest="*_t" />
+<copyField source="*_tf_stored" dest="*_t" />
+<copyField source="*_tf_stored_single" dest="*_f" />
+<copyField source="*_tf_stored" dest="*_f" />
+<copyField source="*_tf_stored" dest="*_a" />
+<copyField source="*_tf_stored_single" dest="*" />
+
+<dynamicField name="*_tsearch_single" type="ignored" indexed="false" stored="false" multiValued="false" />
+<copyField source="*_tsearch" dest="*_t" />
+<copyField source="*_tsearch_single" dest="*_t" />
+<copyField source="*_tsearch" dest="*_tl" />
+<copyField source="*_tsearch_single" dest="*_tl" />
+<copyField source="*_tsearch" dest="*_tp" />
+<copyField source="*_tsearch_single" dest="*_tp" />
+<dynamicField name="*_tsearch_stored_single" type="ignored" indexed="false" stored="false" multiValued="false" />
+<dynamicField name="*_tsearch_stored" type="ignored" indexed="false" stored="false" multiValued="true" />
+<copyField source="*_tsearch_stored_single" dest="*_t" />
+<copyField source="*_tsearch_stored" dest="*_t" />
+<copyField source="*_tsearch_stored_single" dest="*_tl" />
+<copyField source="*_tsearch_stored" dest="*_tl" />
+<copyField source="*_tsearch_stored_single" dest="*_tp" />
+<copyField source="*_tsearch_stored" dest="*_tp" />
+<copyField source="*_tsearch_stored" dest="*_a" />
+<copyField source="*_tsearch_stored_single" dest="*" />
+
+<dynamicField name="*_tsearchf_single" type="ignored" indexed="false" stored="false" multiValued="false" />
+<copyField source="*_tsearchf" dest="*_t" />
+<copyField source="*_tsearchf_single" dest="*_t" />
+<copyField source="*_tsearchf" dest="*_tl" />
+<copyField source="*_tsearchf_single" dest="*_tl" />
+<copyField source="*_tsearchf" dest="*_tp" />
+<copyField source="*_tsearchf_single" dest="*_tp" />
+<copyField source="*_tsearchf" dest="*_f" />
+<copyField source="*_tsearchf_single" dest="*_f" />
+<dynamicField name="*_tsearchf_stored_single" type="ignored" indexed="false" stored="false" multiValued="false" />
+<dynamicField name="*_tsearchf_stored" type="ignored" indexed="false" stored="false" multiValued="true" />
+<copyField source="*_tsearchf_stored_single" dest="*_t" />
+<copyField source="*_tsearchf_stored" dest="*_t" />
+<copyField source="*_tsearchf_stored_single" dest="*_tl" />
+<copyField source="*_tsearchf_stored" dest="*_tl" />
+<copyField source="*_tsearchf_stored_single" dest="*_tp" />
+<copyField source="*_tsearchf_stored" dest="*_tp" />
+<copyField source="*_tsearchf_stored_single" dest="*_f" />
+<copyField source="*_tsearchf_stored" dest="*_f" />
+<copyField source="*_tsearchf_stored" dest="*_a" />
+<copyField source="*_tsearchf_stored_single" dest="*" />
+
+<dynamicField name="*_ef_single" type="ignored" indexed="false" stored="false" multiValued="false" />
+<copyField source="*_ef" dest="*_e" />
+<copyField source="*_ef_single" dest="*_e" />
+<copyField source="*_ef" dest="*_f" />
+<copyField source="*_ef_single" dest="*_f" />
+<dynamicField name="*_ef_stored_single" type="ignored" indexed="false" stored="false" multiValued="false" />
+<dynamicField name="*_ef_stored" type="ignored" indexed="false" stored="false" multiValued="true" />
+<copyField source="*_ef_stored_single" dest="*_e" />
+<copyField source="*_ef_stored" dest="*_e" />
+<copyField source="*_ef_stored_single" dest="*_f" />
+<copyField source="*_ef_stored" dest="*_f" />
+<copyField source="*_ef_stored" dest="*_a" />
+<copyField source="*_ef_stored_single" dest="*" />
+
 <dynamicField name="*_a" type="string" indexed="false" stored="true" multiValued="true" />
 <dynamicField name="*"   type="string" indexed="false" stored="true" multiValued="false" />
