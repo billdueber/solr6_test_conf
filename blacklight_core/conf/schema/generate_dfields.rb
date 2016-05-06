@@ -19,6 +19,8 @@ base_types = {
   loc:      'location_rpt',
   pt:       'point',
   
+  
+  tbig:     [:t, :tp],
   tf:       [:t, :f],
   tsearch:  [:t, :tl, :tp],
   tsearchf: [:t, :tl, :tp, :f],
@@ -49,6 +51,9 @@ def ignored_single(bt)
   dfield("#{bt}_single", 'ignored', false, false)
 end
 
+def ignored_multi(bt)
+  dfield(bt, 'ignored', false, true)
+end
 
 def stored_copyfields(bt)
   multiname = "#{bt}_stored"
@@ -88,6 +93,7 @@ def multi_fset(bt, suffixes)
   rv = []
   
   # Unstored versions
+  rv << ignored_multi(bt)
   rv << ignored_single(bt)
 
   # Copy to the base suffixes
