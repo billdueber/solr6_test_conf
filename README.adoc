@@ -55,7 +55,7 @@ fulltext_t_single::
   - A single multi-valued string field called `emoji_a`
 
   
-== Known limitations
+== Known limitations of the dynamic fields
 
   - All indexed types are multivalued under the hood. This means that if you define two fields:
     ** `fulltext_tsearch_single`
@@ -65,7 +65,7 @@ fulltext_t_single::
 data for both `fulltet_tsearch_single` and `fulltet_t_single`, even though both individual fields are
 single-valued. There's no good solution except to be aware of what indexed fields you're actually producing
 
- - There's no way to know what's actually been indexed. This is a limitation of dynamic fields in 
+ - There's no good way to know what's actually been indexed. This is a limitation of dynamic fields in 
    general, but my schema exacerbates the problem because there's not a one-to-one mapping
    between the field name sent to solr (`title_t_stored_single`) and the actual fields solr has
    (`title_t` and `title_a` in this case)
@@ -85,3 +85,34 @@ I take advantage of a couple peculiarities of solr:
   while allowing the field name actually passed to be used as a gatekeeper
   for non-multi fields (e.g., if you send multiple values to a single-valued
   field, it'll still blow up real nice).
+
+== Field types
+
+There are several field type definitions in the `conf/schema` directory that 
+might have some advantages over the stock Solr types. Some highlights:
+
+Pre-tokenization manipulation:: Some common and/or important text strings are hard
+to search on, like _&_, C++_ and _A♮_. The [common text chain](https://github.com/billdueber/solr6_test_conf/blob/master/blacklight_core/conf/schema/basic_text_chain.xml) I use does reasonably substitutions 
+of these before tokenization, so you can muck with punctuation terms before throwing them out. I also take that opporntunity to do unicode normalization.
+
+Text types::  ...are all built for unicode support (for those of us that have to deal with
+many languages) and do unicode folding (lowercasing), normalization, and the ICU tokenizer.
+
+Left-justified text:: The `text_leftjustified` type will only match a phrase query
+at the start of a string.
+
+Special library types:: this repo includes a .jar file and fieldTypes that do
+normalization on ISBNs and LCCNs, so you know index-time and query-time changes are 
+equivalent. 
+
+Exactish type:: A replacement of sorts for the String type, for exact matching without
+taking into account leading/trailing punctuation or case.
+
+numericID type:: A relatively specialized type that allows you to extract numeric strings
+from text, demanding that they be of a certain length (or length range). Currently set up, essentially, for ISSN extraction, but can be adapted for any data where the numeric ID you're looking for might be buried in other text.
+
+
+
+
+
+
