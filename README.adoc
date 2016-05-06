@@ -12,7 +12,8 @@ solr documents that made sense to me. I ended up with the following goals:
   bare word with a `_a` indicating it's multivalued (an *array*)
 - a single field can result in multiple indexed fields
 
-This results in nice clean stored values (either _field_ or _field_a_)
+This results in nice clean stored values (either _field_ or _field_a_), and takes advantage
+of the fieldTypes described at the bottom of this document.
 
 == Constructing field names
 
