@@ -1,5 +1,6 @@
 = Bill Dueber's DynamicField Solr Config
 Bill Duebebr <bill@dueber.com>
+:toc:
 
 == The goals
 
@@ -15,7 +16,7 @@ solr documents that made sense to me. I ended up with the following goals:
 This results in nice clean stored values (either _field_ or _field_a_), and takes advantage
 of the fieldTypes described at the bottom of this document.
 
-== Constructing field names
+== Using the dynamic field definitions
 
 A constructed field name has two to four parts, separated by underscores.
 
@@ -30,7 +31,7 @@ A constructed field name has two to four parts, separated by underscores.
   
 If `_stored` and `_single` are both present, they need to be in that order. 
 
-== Examples
+=== Examples
 
 title_t_stored::
   Will create both stored and indexed fields, multivalued because we didn't specify `_single`
@@ -55,8 +56,25 @@ fulltext_t_single::
 `emoji_a`::
   - A single multi-valued string field called `emoji_a`
 
-  
-== Known limitations of the dynamic fields
+=== Fields meant for sorting
+
+Two fieldname suffixes are special-cased: _ssort_ for strings meant as a sort key, and
+_isort_ for integers (longs, actually, under the hood) meant as a sort key. The idea
+is that you don't have to separately store a sort field as, say, `title_sort_str` just
+so you can see what it is when debugging.
+
+Examples:
+
+  - `title_ssort` will just produce the string field `title_ssort`; no changes
+  - `title_ssort_stored` will produce `title_ssort`, but also a stored string called
+    `title_sort` (note _sort_ instead of _ssort_)
+  - Similarly, `age_isort_stored` will produce both `age_isort` (indexed long) and 
+    `age_sort` (stored string)
+
+=== A couple quick notes
+    
+
+=== Known limitations of the dynamic fields
 
   - All indexed types are multivalued under the hood. This means that if you define two fields:
     ** `fulltext_tsearch_single`
@@ -72,7 +90,7 @@ single-valued. There's no good solution except to be aware of what indexed field
    (`title_t` and `title_a` in this case)
 
 
-== The implementation
+=== Why this works
 
 I take advantage of a couple peculiarities of solr:
 
@@ -89,28 +107,29 @@ I take advantage of a couple peculiarities of solr:
 
 == Field types
 
-There are several field type definitions in the `conf/schema` directory that 
+There are several field type definitions in the [`conf/schema`](https://github.com/billdueber/solr6_test_conf/tree/master/test_core/conf/schema) directory that 
 might have some advantages over the stock Solr types. Some highlights:
 
 Pre-tokenization manipulation:: Some common and/or important text strings are hard
-to search on, like _&_, C++_ and _A♮_. The [common text chain](https://github.com/billdueber/solr6_test_conf/blob/master/blacklight_core/conf/schema/basic_text_chain.xml) I use does reasonably substitutions 
+to search on, like _&_, C++_ and _A♮_. The [common text chain](https://github.com/billdueber/solr6_test_conf/blob/master/test_core/conf/schema/basic_text_chain.xml) I use does reasonably substitutions 
 of these before tokenization, so you can muck with punctuation terms before throwing them out. I also take that opporntunity to do unicode normalization.
 
-Text types::  ...are all built for unicode support (for those of us that have to deal with
-many languages) and do unicode folding (lowercasing), normalization, and the ICU tokenizer.
+text::  A basic analyzed text type, built for unicode support (for those of us that have to deal with
+many languages) and using unicode folding (lowercasing), normalization, and the ICU tokenizer. Forms the basis of all `text_leftjustified` and `exactish`
 
-Left-justified text:: The `text_leftjustified` type will only match a phrase query
+text_leftjustified:: The `text_leftjustified` type will only match a phrase query
 at the start of a string.
 
-Special library types:: this repo includes a .jar file and fieldTypes that do
-normalization on ISBNs and LCCNs, so you know index-time and query-time changes are 
+exactish:: A replacement of sorts for the String type, for exact matching without
+taking into account case or most punctuation.
+
+numericID:: A relatively specialized type that allows you to extract numeric strings
+from text, demanding that they be of a certain length (or length range). Currently set up, essentially, for ISSN extraction, but can be adapted for any data where the numeric ID you're looking for might be buried in other text.
+
+Special library types:: ...for us library-types. This repo includes a .jar file and fieldTypes that
+do normalization on ISBNs and LCCNs, so you know index-time and query-time changes are 
 equivalent. 
 
-Exactish type:: A replacement of sorts for the String type, for exact matching without
-taking into account leading/trailing punctuation or case.
-
-numericID type:: A relatively specialized type that allows you to extract numeric strings
-from text, demanding that they be of a certain length (or length range). Currently set up, essentially, for ISSN extraction, but can be adapted for any data where the numeric ID you're looking for might be buried in other text.
 
 
 
