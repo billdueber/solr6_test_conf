@@ -73,6 +73,11 @@ Examples:
 
 === A couple quick notes
     
+ - Anything that doesn't match a dynamic field is going to end up as a single-valued
+   stored, unindexed string. In particular, folks that like to use `whatever_display` 
+   for display text can still do so.
+ - Anything that ends is `_a` will end up as a set of multivalued, stored, unindexed strings.
+
 
 === Known limitations of the dynamic fields
 
