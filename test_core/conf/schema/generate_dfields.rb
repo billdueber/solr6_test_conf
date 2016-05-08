@@ -29,10 +29,11 @@ base_types = {
 }
 
 
-def dfield(fname, type, indexed, multiple)
+def dfield(fname, type, indexed, multiple, stored=false)
   i = indexed ? 'true' : 'false'
   m = multiple ? 'true' : 'false'
-  %Q[<dynamicField name="*_#{fname}" type="#{type}" indexed="#{i}" stored="false" multiValued="#{m}" />]
+  s = stored ? 'true' : 'false'
+  %Q[<dynamicField name="*_#{fname}" type="#{type}" indexed="#{i}" stored="#{s}" multiValued="#{m}" />]
 end
 
 def basetype_multi(bt, type)
@@ -134,7 +135,28 @@ def copyfield(fname, bt)
   %Q[<copyField source="*_#{fname}" dest="*_#{bt}" />]  
 end
 
-puts "<!-- This file generated from #{File.expand_path $0} -->"
+puts "<!-- This file generated from #{File.expand_path $0}
+     
+    In addition to all the dynamicField/copyField stuff, we'll
+    also set up a couple easy dynamicType definitions for
+    common cases where we want simpler resulting field names -->"
+    
+puts "<!-- Sort types have to be single valued; we'll use ssort for
+      string sort and isort for integer sort. In both cases,
+      if you specify a stored value, it'll show up as a string
+      named <fieldname>_sort --> "
+      
+puts dfield('ssort',        'string',  true, false)
+puts dfield('isort',        'long',    true, false)
+puts dfield('ssort_stored', 'ignored', false, false)
+puts dfield('isort_stored', 'ignored', false, false)
+puts %Q[<copyField source="*_ssort_stored" dest="*_sort" />]
+puts %Q[<copyField source="*_ssort_stored" dest="*_ssort" />]
+puts %Q[<copyField source="*_isort_stored" dest="*_sort" />]
+puts %Q[<copyField source="*_isort_stored" dest="*_isort" />]
+
+
+
 base_types.each_pair do |bt, type|
   if type.is_a?(Array)
     puts multi_fset(bt, type)
