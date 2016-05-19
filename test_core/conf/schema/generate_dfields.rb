@@ -156,7 +156,6 @@ puts %Q[<copyField source="*_isort_stored" dest="*_sort" />]
 puts %Q[<copyField source="*_isort_stored" dest="*_isort" />]
 
 
-
 base_types.each_pair do |bt, type|
   if type.is_a?(Array)
     puts multi_fset(bt, type)
@@ -165,6 +164,18 @@ base_types.each_pair do |bt, type|
   end
   puts "\n"
 end
+
+puts(<<-C3)
+  <!-- Finally, we define our most base types. Anything that matches *_a will be
+  turned into a multivalued stored string, and anything else will be a single-valued
+  stored string.
+  
+  These are mostly used by the copyField directives above, but there's nothing
+  stopping you from just sending a bare field name to get a stored, not indexed
+  field (e.g., title_display for singular, callnumber_a for multiple call numbers)
+  -->
+C3
+   
 puts   %Q[<dynamicField name="*_a" type="string" indexed="false" stored="true" multiValued="true" />]
 puts   %Q[<dynamicField name="*"   type="string" indexed="false" stored="true" multiValued="false" />]
  
