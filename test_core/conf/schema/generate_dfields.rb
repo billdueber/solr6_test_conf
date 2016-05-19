@@ -1,4 +1,16 @@
-base_types = {
+# generate_dynamic_fields.rb -- generate all the nasty dynamic fields
+# used by this schema setup.
+#
+# General use: ruby generate_dynamic_fields.rb > dynamic_fields.xml
+#
+# 
+
+
+# A mapping of suffixes to field types. The
+# leading underscore is implied (i.e., put t:, not
+# _t: )
+
+suffix_type_mapping = {
   t:        'text',
   tp:       'text_nostem',
   tl:       'text_leftjustified',
@@ -19,14 +31,14 @@ base_types = {
   loc:      'location_rpt',
   pt:       'point',
   
-  
-  tbig:     [:t, :tp],
   tf:       [:t, :f],
   tsearch:  [:t, :tl, :tp],
   tsearchf: [:t, :tl, :tp, :f],
   ef:       [:e, :f],
   
 }
+
+#### I'd leave this alone until Bill refactors it 
 
 
 def dfield(fname, type, indexed, multiple, stored=false)
@@ -136,15 +148,29 @@ def copyfield(fname, bt)
 end
 
 puts "<!-- This file generated from #{File.expand_path $0}
-     
-    In addition to all the dynamicField/copyField stuff, we'll
-    also set up a couple easy dynamicType definitions for
-    common cases where we want simpler resulting field names -->"
+
+    To understand what the heck is going on here (or at least
+    what I was going for, see the docs at
+    https://github.com/billdueber/solr6_test_conf
+
+    General use: ruby #{__FILE__} > schema/dynamic_fields.xml
     
-puts "<!-- Sort types have to be single valued; we'll use ssort for
-      string sort and isort for integer sort. In both cases,
-      if you specify a stored value, it'll show up as a string
-      named <fieldname>_sort --> "
+    Note that just because you're using dynamic fields it
+    doesn't mean you can't special-case things in your
+    schema.xml. You can have a few fields that you
+    specify exactly what the name and type will be,
+    and let everything else fall through to the
+    dynamic types.
+     
+    In addition to all the dynamicField/copyField stuff
+    (ad nauseum, below), we'll also set up a couple 
+    dynamicType definitions for common cases where we want 
+    simpler resulting field names
+    
+    Sort types have to be single valued; we'll use ssort for
+    string sort and isort for integer sort. In both cases,
+    if you specify a stored value, it'll show up as a string
+    named <fieldname>_sort --> "
       
 puts dfield('ssort',        'string',  true, false)
 puts dfield('isort',        'long',    true, false)
@@ -156,10 +182,12 @@ puts %Q[<copyField source="*_isort_stored" dest="*_sort" />]
 puts %Q[<copyField source="*_isort_stored" dest="*_isort" />]
 
 
-base_types.each_pair do |bt, type|
+suffix_type_mapping.each_pair do |bt, type|
   if type.is_a?(Array)
+    puts "\n\n<!-- Suffix _#{bt}, mapping to multiple other suffixes: [#{type.join(', ')}] -->"
     puts multi_fset(bt, type)
   else
+    puts "\n\n<!-- Suffix _#{bt}, producing indexed fields of type #{type} -->"
     puts normal_fset(bt, type)
   end
   puts "\n"
