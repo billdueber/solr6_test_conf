@@ -1,0 +1,40 @@
+
+---
+
+# The suffix_type_map maps suffixes (which have an implicit
+# leading underscore) to solr fieldType names
+
+# The fieldType names represented here are all defined
+# in the various files under conf/schema/ in this repo
+# and are included by default in the master schema.xml
+
+
+t:        text
+tp:       text_nostem
+tl:       text_leftjustified
+e:        exactish
+i:        int
+float:    float
+double:   double
+str:      string
+f:        string
+long:     long
+dt:       date
+isbn:     isbn
+lccn:     lccn
+num:      numericID
+pp:       pipe_delimited
+bin:      binary
+bool:     boolean
+loc:      location_rpt
+pt:       point
+
+
+# You can also map a single suffix onto multiple
+# other suffixes, which will produce each of the
+# field types
+
+tf:       [t, f]
+tsearch:  [t, tl, tp]
+tsearchf: [t, tl, tp, f]
+ef:       [e, f]
