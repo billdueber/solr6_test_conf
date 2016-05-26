@@ -84,7 +84,6 @@
     <charFilter class="solr.ICUNormalizer2CharFilterFactory"/>
     <charFilter class="solr.MappingCharFilterFactory" mapping="&char_expansion_file;"/>
     <tokenizer class="solr.KeywordTokenizerFactory"/>
-    <filter class="solr.TrimFilterFactory"/>
     <filter class="solr.ICUFoldingFilterFactory"/>
     <filter class="solr.CJKWidthFilterFactory"/>
     <filter class="solr.CJKBigramFilterFactory"/>
@@ -97,8 +96,10 @@
             
     <!-- Remove all other punctuation -->
     <filter class="solr.PatternReplaceFilterFactory"
-            pattern="([\p{Punct}])" replacement="" replace="all"
+            pattern="(\p{Punct})" replacement="" replace="all"
             />
+    <filter class="solr.TrimFilterFactory"/>
+    <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>            
   </analyzer>
 </fieldType>
 
