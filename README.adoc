@@ -2,21 +2,29 @@
 Bill Duebebr <bill@dueber.com>
 :toc:
 
-== The goals
+== A fully dynamic solr configuration I don't hate
 
-I started this looking for a configuration that was flexible and resulting in
-solr documents that made sense to me. I ended up with the following goals:
+This is a solr configuration designed to make it easy to both have
+fully dynamic fields without sacrificing readability of the field names.
 
-- every field is *either* stored or indexed -- never both.
-- indexed fields reflect their type in the name
-- stored fields are either a bare word ('main_author') or a 
-  bare word with a `_a` indicating it's multivalued (an *array*)
-- a single field can result in multiple indexed fields
+It strives to be simple to use while fulfilling the following:
 
-This results in nice clean stored values (either _field_ or _field_a_), and takes advantage
-of the fieldTypes described at the bottom of this document.
+* **Simple names**. A solr document will have bare names for
+ the stored fields, like `mainauthor` (single value) or
+ `title_a` (array value).
+
+* **Indexed fields expose their type**.
+With the default setup,
+a test field ends in '_t', an integer in '_i', and a field suitable
+for faceting in '_f'.
+
+* **A single field sent to Solr can result in multiple stored/indexed
+fields**. Only send as much data as you need to; let Solr do the work
+of copying it out to appropriate fields.
+
 
 == Using the dynamic field definitions
+
 
 A constructed field name has two to four parts, separated by underscores.
 
@@ -31,30 +39,57 @@ A constructed field name has two to four parts, separated by underscores.
   
 If `_stored` and `_single` are both present, they need to be in that order. 
 
-=== Examples
+[cols=".<6m,.^1,.^1,.^1,.<10", options="header", width=100]
+.Examples of dynamic field results
+|===
+|Fieldname | Stored  | Indexed Name/type| Arity | Notes
 
-title_t_stored::
-  Will create both stored and indexed fields, multivalued because we didn't specify `_single`
-  - `title_t`, an indexed `text` field
-  - `title_a`, a multivalued stored field ('a' for _array_, since this is a multi-valued field)
-  
-mainauthor_ef_stored_single::
-  - `mainauthor_e`, an indexed `exactish` field
-  - `mainauthor_f`, an indexed string suitable for _faceting_
-  - `mainauthor`, the stored, single-valued field.
-  
-fulltext_t::
-  - `fulltext_t`, just the single indexed, multivalued field with no stored field.
-  
-fulltext_t_single::
-  - `fulltext_t`, again the indexed field with no stored field, but this one will complain
-     if you try to send multiple values.
+|title_t
+|n/a
+|text
+|Mult
+|Default is unstored array
 
-`rawmarc`:: 
-  - Just the single-valued string field `rawmarc`
-  
-`emoji_a`::
-  - A single multi-valued string field called `emoji_a`
+|author_e_stored_single
+|author
+|author_e/exactish
+|Single
+| `stored` must come before `single`
+
+|rawrecord
+|rawrecord
+|n/a
+|Single
+|Anything not matches is just stored
+
+|product_t_stored
+|product_a
+|product_t/text
+|Mult
+|Stored arrays end in `_a`
+
+|subject_tsearchf_stored
+|subject_a
+a|subject_t/text +
+subject_tl/text_leftjustified +
+subject_tp/text_nostem +
+subject_f/string +
+|Mult
+|Configuration file allows multi-expanse
+
+|emoji_a
+|emoji_a
+|n/a
+|Mult
+|Fields that end in `_a` are stored as an array without indexing
+
+|title_a_f_single
+|?
+|?
+|?
+| Hmmm. Better test this.
+|===
+
 
 === Fields meant for sorting
 
@@ -71,25 +106,23 @@ Examples:
   - Similarly, `age_isort_stored` will produce both `age_isort` (indexed long) and 
     `age_sort` (stored string)
 
-=== A couple quick notes
-    
- - Anything that doesn't match a dynamic field is going to end up as a single-valued
-   stored, unindexed string. In particular, folks that like to use `whatever_display` 
-   for display text can still do so.
- - Anything that ends is `_a` will end up as a set of multivalued, stored, unindexed strings.
 
+=== Limitations
 
-=== Known limitations of the dynamic fields
+All indexed types are multivalued under the hood::
+This means that if you define two fields:
+* `fulltext_tsearch_single`
+* `fulltext_t_single`
 
-  - All indexed types are multivalued under the hood. This means that if you define two fields:
-    ** `fulltext_tsearch_single`
-    ** `fulltext_t_single`
+...then you'll have overloaded `fulltext_t`, since the `_tsearch` type produces, among
+  other fields a `_t`.
 
-...then you'll have overloaded `fulltext_t` and it will end up with multiple values if you send
+The result is that you will end up with multiple values if you send
 data for both `fulltet_tsearch_single` and `fulltet_t_single`, even though both individual fields are
 single-valued. There's no good solution except to be aware of what indexed fields you're actually producing
 
- - There's no good way to know what's actually been indexed. This is a limitation of dynamic fields in 
+There's no good way to know what's actually been indexed::
+This is a limitation of dynamic fields in
    general, but my schema exacerbates the problem because there's not a one-to-one mapping
    between the field name sent to solr (`title_t_stored_single`) and the actual fields solr has
    (`title_t` and `title_a` in this case)
