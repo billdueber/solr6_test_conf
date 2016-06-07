@@ -12,7 +12,7 @@
 
 suffix_type_mapping = {
   t:        'text',
-  tp:       'text_nostem',
+  tp:       'text_nostem', # "proper"
   tl:       'text_leftjustified',
   e:        'exactish',
   i:        'int',
