@@ -1,2 +1,3 @@
+<filter class="solr.StemmerOverrideFilterFactory" dictionary="schema/stemming/stemdict.tsv" />
 <filter class="solr.SnowballPorterFilterFactory">
 <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>

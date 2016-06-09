@@ -1,0 +1,9 @@
+# Tab-delimited file to override stemming
+# Original on the left; how you want it stemmed on the right
+# The stemmers will leave everything in the first column
+# alone.
+
+usability	usability
+monkeys	monkey
+
+
