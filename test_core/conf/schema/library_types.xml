@@ -1,13 +1,23 @@
 
-<!-- Allow multiple comma- or semi-colon-separated values -->
+<!-- Allow multiple comma- or semi-colon-separated values for isbn.
+     We know they're all going to come out at 13 characters, so ignore
+     anything that isn't that long.
+ -->
+
 <fieldType name="isbn" class="solr.TextField">
     <analyzer>
         <tokenizer class="solr.PatternTokenizerFactory" pattern="[;,]\s*" />
         <filter class="edu.umich.lib.solr_filters.ISBNNormalizerFilterFactory"/>
         <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
+        <filter class="solr.LengthFilterFactory" min="13" max="13" />
     </analyzer>
 </fieldType>
 
+
+<!--
+   LCCN normalization as per
+   http://www.loc.gov/marc/lccn-namespace.html#syntax:.
+-->
 
 <fieldType name="lccn" class="solr.TextField">
      <analyzer>
@@ -15,6 +25,9 @@
          <filter class="edu.umich.lib.solr_filters.LCCNNormalizerFilterFactory"/>
      </analyzer>
 </fieldType>
+
+
+<!-- Callnumber normalization as per the vufind/solrmarc folks -->
 
 <fieldType name="lc_callnumber" class="solr.TextField">
     <analyzer>
